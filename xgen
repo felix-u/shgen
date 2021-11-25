@@ -1,8 +1,13 @@
 #!/bin/sh
 
-# function to return xresources colours
+# function to return xresources colours (e.g. #808080) and dpi, etc.
 xquery () {
     xrdb -query | grep $1 | awk '{print $NF; exit}'
+}
+
+# return hex without hash - useful in some instances
+xquerystrip () {
+    xquery $1 | tr -d \#
 }
 
 # get exact DPI as scale factor (DPI 96 = scale 1)
@@ -15,3 +20,7 @@ dpi () {
     printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
             # add 0.01 so that 2.5 rounds to 3, not 2
 }
+
+cat<< EOF > $2
+$(source $1)
+EOF

@@ -1,0 +1,40 @@
+set guioptions ""
+set font                        "Iosevka 12"
+set notification-error-bg       "$(xquery background)" #background
+set notification-error-fg       "$(xquery color1)" #red
+set notification-warning-bg     "$(xquery background)" #background
+set notification-warning-fg     "$(xquery color3)" #yellow
+set notification-bg             "$(xquery background)" #backgound
+set notification-fg             "$(xquery color15)" #foreground-dim
+
+set completion-bg               "$(xquery color0)" #colour0
+set completion-fg               "$(xquery color15)" #foreground-dim
+set completion-group-bg         "$(xquery color0)" #colour0
+set completion-group-fg         "$(xquery color15)" #foreground-dim
+set completion-highlight-bg     "$(xquery color8)" #bright black
+set completion-highlight-fg     "$(xquery color15)" #foreground-dim
+
+set index-bg                    "$(xquery background)" #background
+set index-fg                    "$(xquery color15)" #foreground-dim
+set index-active-bg             "$(xquery color8)" #colour8
+set index-active-fg             "$(xquery color15)" #foreground-dim
+
+set inputbar-bg                 "$(xquery background)" #background
+set inputbar-fg                 "$(xquery color15)" #foreground-dim
+set statusbar-bg                "$(xquery background)" #background
+set statusbar-fg                "$(xquery color15)" #foreground-dim
+
+set highlight-color             "$(xquery color3)" #yellow
+set highlight-active-color      "$(xquery color3)" #yellow
+
+set default-bg                  "$(xquery background)" #background
+set default-fg                  "$(xquery foreground)" #foreground
+set render-loading              true
+set render-loading-bg           "$(xquery background)" #background
+set render-loading-fg           "$(xquery foreground)" #foreground
+
+set recolor-lightcolor          "$(xquery background)" #background
+set recolor-darkcolor           "$(xquery foreground)" #foreground
+set recolor                     "true"
+
+set selection-clipboard clipboard

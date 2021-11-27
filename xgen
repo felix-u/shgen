@@ -5,56 +5,31 @@
 
 input=$1
 output=$2
-tmpfile=/tmp/xgenapply
+
+# create script in /tmp/ to generate output
+tmpfile=/tmp/xgen$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 6)
 cp $input $tmpfile
+
+# write temporary script: shebang + custom functions + input file
+cat << EOF > $tmpfile
+#!/usr/bin/env sh
 
 # function to return xresources colours (e.g. #808080) and dpi, etc.
 xquery () {
-    xrdb -query | grep $1 | awk '{print $NF; exit}'
+    xrdb -query | grep \$1 | awk '{print \$NF; exit}'
 }
 
 # return hex without hash - useful in some instances
 xquerystrip () {
-    col=$(xquery $1)
-    echo ${col#\#}
+    col=\$(xquery \$1)
+    echo \${col#\#}
 }
 
-# get exact DPI as scale factor (DPI 96 = scale 1)
-xreplace () {
-    [ "$(grep "$1" "$input")" ] && sed -i "s/$1/$2/g" $tmpfile
-}
+cat << CONF > $output
+$(cat $input)
+CONF
+EOF
 
-# - TODO: rewrite in POSIX
-# XDPI=$(bc <<< "scale=2; $(xquery dpi)/96")
-# dpi () {
-#     VAL=$(bc <<< "scale=2; $1 * $XDPI"); # multiply input by DPI
-#     # return value rounded to nearest integer
-#     printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
-#             # add 0.01 so that 2.5 rounds to 3, not 2
-# }
-
-apply() {
-    xreplace "\$(xquery background)" "$(xquery background)"
-    xreplace "\$(xquery foreground)" "$(xquery foreground)"
-    for num in `seq 0 15`; do
-        xreplace "\$(xquery color${num})" "$(xquery color${num})"
-    done
-    xreplace "\$(xquery fontmono)" "$(xquery fontmono)"
-}
-
-applystrip() {
-    xreplace "\$(xquerystrip background)" "$(xquerystrip background)"
-    xreplace "\$(xquerystrip foreground)" "$(xquerystrip foreground)"
-    for num in `seq 0 15`; do
-         xreplace "\$(xquerystrip color${num})" "$(xquerystrip color${num})"
-    done
-}
-
-# check for "xquery" in file before running check on all below
-[ "$(grep "xquery" "$1")" ] && apply
-
-# check for "xquerystrip" in file before running check on all below
-[ "$(grep "xquerystrip" "$1")" ] && applystrip
-
-cp $tmpfile $output && rm $tmpfile
-
+# execute script
+chmod +x $tmpfile
+exec $tmpfile

@@ -1,20 +1,36 @@
 # xgen
-A POSIX tool for dynamically generating configs with colours, dpi, and fonts from .Xresources.
+**A POSIX tool for evaluating shell script in non-shell files.**
+The supplied version comes with two functions allowing you to grab colours, dpi, and fonts from .Xresources.
 
-## Installation
-The following must be installed on your system: `awk`, `sed`, `bc`, and `xorg-xrdb`.
-To "install" `xgen`, clone this repo in a directory of your choosing, make `xgen` executable, and symlink it to `/usr/bin/` or another directory in your `$PATH`.
+## Requirements
+By itself, `xgen` has no dependencies. If you would like to use the supplied functions for querying Xresources, install `awk` and `xorg-xrdb`.
+Clone this repo in a directory of your choosing and audit `xgen` to make sure you understand what it is doing. It is a very short and simple script.
+Then, make it executable.
 ```sh
 git clone https://github.com/felix-u/xgen && cd xgen
 chmod +x ./xgen
-sudo ln -s ./xgen /usr/bin
+```
+For convenience, you can alias `xgen` to the location of the script on your disc in your shell profile:
+```sh
+alias xgen=/path/to/xgen
 ```
 
 ## Usage
-Firstly, set up an `.Xresources` file and make sure you understand what's in it. You can learn about X Resources [here](https://wiki.debian.org/Xresources) or [here](https://wiki.archlinux.org/title/x_resources).
-`xgen` also looks for a `fontmono` X Resource defining your monospace font in one word, but you can modify the script to find a different resource instead.
 
-Inside a text file such as a configuration file, you can now call the `xquery` function to get colours, dpi, or your font from X Resources like so:
+#### Working with plaintext
+
+In a shell script, you'd use `$(command [arguments])` to include the output of a command. For instance:
+```sh
+$ echo "There are $(ls ~ | wc -l) lines in my home directory"
+```
+output: `There are 74 lines in my home directory`
+
+`xgen` allows you to do the same in any plaintext file. This means you can call shell commands in lua, yaml, javascript, or any other plaintext file, such as configuration files. To get an idea of what is possible, view [some examples](./examples.md).
+
+#### Querying X Resources
+Firstly, set up an `.Xresources` file and make sure you understand what's in it. You can learn about X Resources [here](https://wiki.debian.org/Xresources) or [here](https://wiki.archlinux.org/title/x_resources).
+
+Inside a text file such as a configuration file, you can now call the `xquery` function to get colours, dpi, or your font from X Resources:
 ```
 set font                        "$(xquery fontmono) 12"
 set notification-error-bg       "$(xquery background)" #background
@@ -41,5 +57,6 @@ Finally, generate the text and write it to a file as follows:
 xgen /path/to/input /path/to/output
 ```
 
-### Why this syntax?
-At the moment, `xgen` uses `sed` to run global substitutions on a limited number of supported strings. In the future, `xgen` is planned to use your system shell to evaluate any commands called in your file as `$(command input)`. In short, shell syntax is used for compatibility with future versions of `xgen` eventually allowing you to use actual shell scripting in any config file. Help out with a pull request! :)
+#### Safety
+`xgen` works by generating a script in `/tmp/` and running it, so make certain you know exactly what commands you're calling in your configs. I take no responsibility for a ruined system due to careless use.
+If this is a concern, use the [old version](./old) of `xgen`, which searches for specific strings (`xquery` and `xquerystrip` only) and run global substitutions on them. This is far more limited functionality, but if you only plan to use `xquery` and `xquerystrip` to grab your font, dpi, and colour scheme from X Resources, the syntax is unchanged.

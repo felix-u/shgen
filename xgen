@@ -1,11 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # check for lack of arguments before anything else
-# this also means "xgen help" or "xgen --help" will give usage
-if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "usage: xgen /path/to/inputfile /path/to/outputfile"
-    exit 1
-fi
+[ -z "$1" ] || [ -z "$2" ] && echo "usage: xgen [INPUT FILE] [OUTPUT FILE]" && exit 1
+
+input=$1
+output=$2
+tmpfile=/tmp/xgenapply
+cp $input $tmpfile
 
 # function to return xresources colours (e.g. #808080) and dpi, etc.
 xquery () {
@@ -14,78 +15,46 @@ xquery () {
 
 # return hex without hash - useful in some instances
 xquerystrip () {
-    xquery $1 | tr -d \#
+    col=$(xquery $1)
+    echo ${col#\#}
 }
 
 # get exact DPI as scale factor (DPI 96 = scale 1)
-XDPI=$(bc <<< "scale=2; $(xquery dpi)/96")
-
-# function to apply DPI to input num
-# not implemented!!!
-dpi () {
-    VAL=$(bc <<< "scale=2; $1 * $XDPI"); # multiply input by DPI
-    # return value rounded to nearest integer
-    printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
-            # add 0.01 so that 2.5 rounds to 3, not 2
+xreplace () {
+    [ "$(grep "$1" "$input")" ] && sed -i "s/$1/$2/g" $tmpfile
 }
 
-input=$1
-tmpfile=/tmp/tmpconfig
-dest=$2
+# - TODO: rewrite in POSIX
+# XDPI=$(bc <<< "scale=2; $(xquery dpi)/96")
+# dpi () {
+#     VAL=$(bc <<< "scale=2; $1 * $XDPI"); # multiply input by DPI
+#     # return value rounded to nearest integer
+#     printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
+#             # add 0.01 so that 2.5 rounds to 3, not 2
+# }
 
-cp $input $tmpfile
+apply() {
+    xreplace "\$(xquery background)" "$(xquery background)"
+    xreplace "\$(xquery foreground)" "$(xquery foreground)"
+    for num in `seq 1 15`; do
+        xreplace "\$(xquery color${num})" "$(xquery color${num})"
+    done
+    xreplace "\$(xquery fontmono)" "$(xquery fontmono)"
+}
 
-# check if input string exists in file before attempting gloabl substitution
-xreplace () {
-    if grep -q "$1" "$input"; then
-        sed -i -e "s/$1/$2/g" $tmpfile
-    fi
+applystrip() {
+    xreplace "\$(xquerystrip background)" "$(xquerystrip background)"
+    xreplace "\$(xquerystrip foreground)" "$(xquerystrip foreground)"
+    for num in `seq 1 15`; do
+         xreplace "\$(xquerystrip color${num})" "$(xquerystrip color${num})"
+    done
 }
 
 # check for "xquery" in file before running check on all below
-if grep -q "xquery" "$1"; then
-    xreplace "\$(xquery background)" "$(xquery background)"
-    xreplace "\$(xquery foreground)" "$(xquery foreground)"
-    xreplace "\$(xquery color0)" "$(xquery color0)"
-    xreplace "\$(xquery color1)" "$(xquery color1)"
-    xreplace "\$(xquery color2)" "$(xquery color2)"
-    xreplace "\$(xquery color3)" "$(xquery color3)"
-    xreplace "\$(xquery color4)" "$(xquery color4)"
-    xreplace "\$(xquery color5)" "$(xquery color5)"
-    xreplace "\$(xquery color6)" "$(xquery color6)"
-    xreplace "\$(xquery color7)" "$(xquery color7)"
-    xreplace "\$(xquery color8)" "$(xquery color8)"
-    xreplace "\$(xquery color9)" "$(xquery color9)"
-    xreplace "\$(xquery color10)" "$(xquery color10)"
-    xreplace "\$(xquery color11)" "$(xquery color11)"
-    xreplace "\$(xquery color12)" "$(xquery color12)"
-    xreplace "\$(xquery color13)" "$(xquery color13)"
-    xreplace "\$(xquery color14)" "$(xquery color14)"
-    xreplace "\$(xquery color15)" "$(xquery color15)"
-    xreplace "\$(xquery fontmono)" "$(xquery fontmono)"
-fi
+[ "$(grep "xquery" "$1")" ] && apply
 
 # check for "xquerystrip" in file before running check on all below
-if grep -q "xquerystrip" "$1"; then
-    xreplace "\$(xquerystrip background)" "$(xquerystrip background)"
-    xreplace "\$(xquerystrip foreground)" "$(xquerystrip foreground)"
-    xreplace "\$(xquerystrip color0)" "$(xquerystrip color0)"
-    xreplace "\$(xquerystrip color1)" "$(xquerystrip color1)"
-    xreplace "\$(xquerystrip color2)" "$(xquerystrip color2)"
-    xreplace "\$(xquerystrip color3)" "$(xquerystrip color3)"
-    xreplace "\$(xquerystrip color4)" "$(xquerystrip color4)"
-    xreplace "\$(xquerystrip color5)" "$(xquerystrip color5)"
-    xreplace "\$(xquerystrip color6)" "$(xquerystrip color6)"
-    xreplace "\$(xquerystrip color7)" "$(xquerystrip color7)"
-    xreplace "\$(xquerystrip color8)" "$(xquerystrip color8)"
-    xreplace "\$(xquerystrip color9)" "$(xquerystrip color9)"
-    xreplace "\$(xquerystrip color10)" "$(xquerystrip color10)"
-    xreplace "\$(xquerystrip color11)" "$(xquerystrip color11)"
-    xreplace "\$(xquerystrip color12)" "$(xquerystrip color12)"
-    xreplace "\$(xquerystrip color13)" "$(xquerystrip color13)"
-    xreplace "\$(xquerystrip color14)" "$(xquerystrip color14)"
-    xreplace "\$(xquerystrip color15)" "$(xquerystrip color15)"
-fi
+[ "$(grep "xquerystrip" "$1")" ] && applystrip
 
-cp $tmpfile $dest
-rm $tmpfile
+cp $tmpfile $output && rm $tmpfile
+

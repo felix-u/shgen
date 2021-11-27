@@ -60,4 +60,4 @@ xgen /path/to/input /path/to/output
 
 #### Safety
 `xgen` works by generating a script in `/tmp/` and running it, so make certain you know exactly what commands you're calling in your configs. I take no responsibility for a ruined system due to careless use.
-If this is a concern, use the [old version](./old) of `xgen`, which searches for specific strings (`xquery` and `xquerystrip` only) and runs global substitutions on them. This is far more limited functionality, but if you only plan to use `xquery` and `xquerystrip` to grab your font, dpi, and colour scheme from X Resources, the syntax is unchanged.
+If this is a concern, use the [old version](./old/OLD.md) of `xgen`, which searches for specific strings (`xquery` and `xquerystrip` only) and runs global substitutions on them. This is far more limited functionality, but if you only plan to use `xquery` and `xquerystrip` to grab your font, dpi, and colour scheme from X Resources, the syntax is unchanged.

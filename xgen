@@ -36,7 +36,7 @@ xreplace () {
 apply() {
     xreplace "\$(xquery background)" "$(xquery background)"
     xreplace "\$(xquery foreground)" "$(xquery foreground)"
-    for num in `seq 1 15`; do
+    for num in `seq 0 15`; do
         xreplace "\$(xquery color${num})" "$(xquery color${num})"
     done
     xreplace "\$(xquery fontmono)" "$(xquery fontmono)"
@@ -45,7 +45,7 @@ apply() {
 applystrip() {
     xreplace "\$(xquerystrip background)" "$(xquerystrip background)"
     xreplace "\$(xquerystrip foreground)" "$(xquerystrip foreground)"
-    for num in `seq 1 15`; do
+    for num in `seq 0 15`; do
          xreplace "\$(xquerystrip color${num})" "$(xquerystrip color${num})"
     done
 }

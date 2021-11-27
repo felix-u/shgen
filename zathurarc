@@ -1,0 +1,40 @@
+set guioptions ""
+set font                        "Iosevka 12"
+set notification-error-bg       "#1a1b26" #background
+set notification-error-fg       "#f7768e" #red
+set notification-warning-bg     "#1a1b26" #background
+set notification-warning-fg     "#e0af68" #yellow
+set notification-bg             "#1a1b26" #backgound
+set notification-fg             "#acb0d0" #foreground-dim
+
+set completion-bg               "#2d2f43" #colour0
+set completion-fg               "#acb0d0" #foreground-dim
+set completion-group-bg         "#2d2f43" #colour0
+set completion-group-fg         "#acb0d0" #foreground-dim
+set completion-highlight-bg     "#4e5173" #bright black
+set completion-highlight-fg     "#acb0d0" #foreground-dim
+
+set index-bg                    "#1a1b26" #background
+set index-fg                    "#acb0d0" #foreground-dim
+set index-active-bg             "#4e5173" #colour8
+set index-active-fg             "#acb0d0" #foreground-dim
+
+set inputbar-bg                 "#1a1b26" #background
+set inputbar-fg                 "#acb0d0" #foreground-dim
+set statusbar-bg                "#1a1b26" #background
+set statusbar-fg                "#acb0d0" #foreground-dim
+
+set highlight-color             "#e0af68" #yellow
+set highlight-active-color      "#e0af68" #yellow
+
+set default-bg                  "#1a1b26" #background
+set default-fg                  "#dce0ef" #foreground
+set render-loading              true
+set render-loading-bg           "#1a1b26" #background
+set render-loading-fg           "#dce0ef" #foreground
+
+set recolor-lightcolor          "#1a1b26" #background
+set recolor-darkcolor           "#dce0ef" #foreground
+set recolor                     "true"
+
+set selection-clipboard clipboard

@@ -20,24 +20,14 @@ xquerystrip () {
 }
 
 # get exact DPI as scale factor (DPI 96 = scale 1)
-XDPI=$(bc <<< "scale=2; $(xquery dpi)/96")
-
-# function to apply DPI to input num
-dpi () {
-    VAL=$(bc <<< "scale=2; $1 * $XDPI"); # multiply input by DPI
-    # return value rounded to nearest integer
-    printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
-            # add 0.01 so that 2.5 rounds to 3, not 2
-}
-
 xreplace () {
-    [ $(grep "$1" "$input") ] && sed -i "s/$1/$2/g" $tmpfile
+    [ "$(grep "$1" "$input")" ] && sed -i "s/$1/$2/g" $tmpfile
 }
 
 apply() {
     xreplace "\$(xquery background)" "$(xquery background)"
     xreplace "\$(xquery foreground)" "$(xquery foreground)"
-    for num in `seq 1 15` do
+    for num in `seq 1 15`; do
         xreplace "\$(xquery color${num})" "$(xquery color${num})"
     done
     xreplace "\$(xquery fontmono)" "$(xquery fontmono)"
@@ -46,15 +36,16 @@ apply() {
 applystrip() {
     xreplace "\$(xquerystrip background)" "$(xquerystrip background)"
     xreplace "\$(xquerystrip foreground)" "$(xquerystrip foreground)"
-    for i in `seq 1 15`; do
-       xreplace "\$(xquerystrip color${i})" "$(xquerystrip color${i})"
+    for num in `seq 1 15`; do
+         xreplace "\$(xquerystrip color${num})" "$(xquerystrip color${num})"
     done
 }
 
 # check for "xquery" in file before running check on all below
-[[ $(grep "xquery" "$1") ]] && apply
+[ "$(grep "xquery" "$1")" ] && apply
 
 # check for "xquerystrip" in file before running check on all below
-[[ $(grep "xquerystrip" "$1") ]] && applystrip
+[ "$(grep "xquerystrip" "$1")" ] && applystrip
 
 cp $tmpfile $output && rm $tmpfile
+

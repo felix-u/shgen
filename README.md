@@ -1,5 +1,5 @@
 # xgen
-**A POSIX tool for evaluating shell script in non-shell files.**
+**A POSIX tool for using shell script in non-shell files.**
 
 The supplied version comes with two functions allowing you to grab colours, dpi, and fonts from .Xresources.
 

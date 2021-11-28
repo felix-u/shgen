@@ -1,8 +1,6 @@
 # xgen
 **A POSIX tool for using shell script in non-shell files.**
 
-The supplied version comes with two functions allowing you to grab colours, dpi, and fonts from .Xresources.
-
 ## Requirements
 By itself, `xgen` has no dependencies. If you would like to use the supplied functions for querying Xresources, install `awk` and `xorg-xrdb`.
 Clone this repo in a directory of your choosing and audit `xgen` to make sure you understand what it is doing - it is a short and simple script.
@@ -29,6 +27,8 @@ output: `There are 74 lines in my home directory`
 `xgen` allows you to do the same in any plaintext file. This means you can call shell commands in lua, yaml, javascript, or any other plaintext file, such as configuration files. To get an idea of what is possible, view [some examples](./examples.md).
 
 #### Querying X Resources
+`xgen` comes with two functions allowing you to grab colours, dpi, and fonts from .Xresources: `xquery` and `xquerystrip`.
+
 Firstly, set up an `.Xresources` file and make sure you understand what's in it. You can learn about X Resources [here](https://wiki.debian.org/Xresources) or [here](https://wiki.archlinux.org/title/x_resources).
 
 Inside a text file such as a configuration file, you can now call the `xquery` function to get colours, dpi, or your font from X Resources:

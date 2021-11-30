@@ -53,6 +53,7 @@ applystrip() {
     done
 }
 
+
 # check for "xquery" in file before running check on all below
 [ "$(grep "xquery" "$1")" ] && apply
 

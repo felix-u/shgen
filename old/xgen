@@ -36,7 +36,7 @@ xreplace () {
 apply() {
     xreplace "\$(xquery background)" "$(xquery background)"
     xreplace "\$(xquery foreground)" "$(xquery foreground)"
-    xreplace "\$(xquery orange)" "$(pastel mix $(xquery color1) $(xquery color3) | pastel format h)"
+    xreplace "\$(xquery orange)" "$(pastel mix $(xquery color1) $(xquery color3) | pastel format hex)"
     xreplace "\$(xquery pink)" "$(pastel mix $(xquery color1) $(xquery color5) | pastel format hex)"
     for num in `seq 0 15`; do
         xreplace "\$(xquery color${num})" "$(xquery color${num})"

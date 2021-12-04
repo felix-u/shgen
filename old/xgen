@@ -36,7 +36,8 @@ xreplace () {
 apply() {
     xreplace "\$(xquery background)" "$(xquery background)"
     xreplace "\$(xquery foreground)" "$(xquery foreground)"
-    xreplace "\$(xquery orange)" "$(pastel mix $(xquery color1) $(xquery color3) | pastel format hex)"
+    xreplace "\$(xquery orange)" "$(pastel mix $(xquery color1) $(xquery color3) | pastel format h)"
+    xreplace "\$(xquery pink)" "$(pastel mix $(xquery color1) $(xquery color5) | pastel format hex)"
     for num in `seq 0 15`; do
         xreplace "\$(xquery color${num})" "$(xquery color${num})"
     done
@@ -48,6 +49,7 @@ applystrip() {
     xreplace "\$(xquerystrip background)" "$(xquerystrip background)"
     xreplace "\$(xquerystrip foreground)" "$(xquerystrip foreground)"
     xreplace "\$(xquerystrip orange)" "$(pastel mix $(xquery color1) $(xquery color3) | pastel format hex | tr -d "#")"
+    xreplace "\$(xquerystrip pink)" "$(pastel mix $(xquery color1) $(xquery color5) | tr -d "#")"
     for num in `seq 0 15`; do
          xreplace "\$(xquerystrip color${num})" "$(xquerystrip color${num})"
     done

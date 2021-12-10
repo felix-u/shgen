@@ -25,13 +25,14 @@ xreplace () {
 }
 
 # - TODO: rewrite in POSIX
-# XDPI=$(bc <<< "scale=2; $(xquery dpi)/96")
-# dpi () {
-#     VAL=$(bc <<< "scale=2; $1 * $XDPI"); # multiply input by DPI
-#     # return value rounded to nearest integer
-#     printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
-#             # add 0.01 so that 2.5 rounds to 3, not 2
-# }
+XDPI=$(bc <<< "scale=2; $(xquery dpi)/96")
+dpi () {
+    VAL=$(bc <<< "scale=2; $1 * $XDPI"); # multiply input by DPI
+    # return value rounded to nearest integer
+    printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
+            # add 0.01 so that 2.5 rounds to 3, not 2
+}
+# POSIX COMPLIANCE RESUMES HERE
 
 apply() {
     xreplace "\$(xquery background)" "$(xquery background)"

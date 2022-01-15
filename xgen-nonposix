@@ -40,4 +40,5 @@ EOF
 
 # execute script
 chmod +x $tmpfile
-exec $tmpfile
+$tmpfile
+rm -f $tmpfile

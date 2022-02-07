@@ -1,0 +1,43 @@
+#!/usr/bin/env sh
+
+# check for lack of arguments before anything else
+[ -z "$1" ] || [ -z "$2" ] && echo "usage: xgen [INPUT FILE] [OUTPUT FILE]" && exit 1
+
+input=$1
+output=$2
+
+# create script in /tmp/ to generate output
+tmpfile=/tmp/xgen$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 6)
+cp $input $tmpfile
+
+# write temporary script: shebang + custom functions + input file
+cat << EOF > $tmpfile
+#!/usr/bin/env sh
+
+# function to return xresources colours (e.g. #808080) and dpi, etc.
+wq () {
+    grep "\$1:" ~/.Xresources | awk '{print \$2}'
+}
+
+# return hex without hash - useful in some instances
+wqs () {
+    wq "\$1" | tr -d "#"
+}
+
+WDPI=\$(bc <<< "scale=2; \$(wq dpi)/96")
+dpi () {
+    VAL=\$(bc <<< "scale=2; \$1 * \$WDPI"); # multiply input by DPI
+    # return value rounded to nearest integer
+    printf "%.0f\n" "\$(bc <<< "scale=2; \$VAL + 0.01")"
+            # add 0.01 so that 2.5 rounds to 3, not 2
+}
+
+cat << CONF > $output
+$(cat $input)
+CONF
+EOF
+
+# execute script
+chmod +x $tmpfile
+$tmpfile
+rm -f $tmpfile

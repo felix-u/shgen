@@ -1,3 +1,5 @@
+### This repo is undergoing refactoring and until that's complete, consider this README outdated.
+
 # xgen
 **A POSIX tool for using shell script in non-shell files.**
 

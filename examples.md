@@ -67,11 +67,12 @@ Grab your network interface name:
 ```sh
 [module/network]
 type = internal/network
-interface = $(ip addr | awk '/state UP/ {print $2}' | sed 's/.$//')
+interface = $(ip -o route show to default | awk '{print $5}')
+
 ```
 Output on my system:
 ```
 [module/network]
 type = internal/network
-interface = wlp3s0
+interface = eno2
 ```

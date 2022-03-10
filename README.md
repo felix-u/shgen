@@ -16,7 +16,7 @@ shgen /path/to/inputfile /path/to/outputfile
 1. One very handy use of `shgen` is to "hack in" support for your Xresources file
 in any configuration file, including on Wayland. Put this script somewhere in
 your `$PATH`. In this scenario the script is named `query`, and `$XRESOURCES`
-is where you keep your Xresources file.
+is the path to your Xresources file.
 ```sh
 grep "$1:" "$XRESOURCES" | awk '{print $2}'
 ```

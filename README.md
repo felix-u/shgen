@@ -1,65 +1,85 @@
-### This repo is undergoing refactoring and until that's complete, consider this README outdated.
+### shgen
+`shgen` is a POSIX shell script to evaluate shell expansions within any file.
+It is fast and lightweight with no external dependencies.
 
-# xgen
-**A POSIX tool for using shell script in non-shell files.**
-
-## Requirements
-By itself, `xgen` has no dependencies. If you would like to use the supplied functions for querying Xresources, install `awk` and `xorg-xrdb`.
-Clone this repo in a directory of your choosing and audit `xgen` to make sure you understand what it is doing - it is a short and simple script.
-Then, make it executable.
-```sh
-git clone https://github.com/felix-u/xgen && cd xgen
-chmod +x ./xgen
-```
-For convenience, you can alias `xgen` to the location of the script on your disc in your shell profile:
-```sh
-alias xgen=/path/to/xgen
-```
 
 ## Usage
-
-#### Working with plaintext
-
-In a shell script, you'd use `$(command [arguments])` to include the output of a command. For instance:
+Make an alias or copy `shgen` to somewhere in your `$PATH`.
+Then run `shgen`, providing as arguments an existing input file and an output file
+location. If the output file already exists, it will be overwritten.
 ```sh
-$ echo "There are $(ls ~ | wc -l) lines in my home directory"
-```
-output: `There are 74 lines in my home directory`
-
-`xgen` allows you to do the same in any plaintext file. This means you can call shell commands in lua, yaml, javascript, or any other plaintext file, such as configuration files. To get an idea of what is possible, view [some examples](./examples.md).
-
-#### Querying X Resources
-`xgen` comes with two functions allowing you to grab colours, dpi, and fonts from .Xresources: `xquery` and `xquerystrip`.
-
-Firstly, set up an `.Xresources` file and make sure you understand what's in it. You can learn about X Resources [here](https://wiki.debian.org/Xresources) or [here](https://wiki.archlinux.org/title/x_resources).
-
-Inside a text file such as a configuration file, you can now call the `xquery` function to get colours, dpi, or your font from X Resources:
-```
-set font                        "$(xquery fontmono) 12"
-set notification-error-bg       "$(xquery background)" #background
-set notification-error-fg       "$(xquery color1)" #red
-```
-output:
-```
-set font                        "Iosevka 12"
-set notification-error-bg       "#1a1b26" #background
-set notification-error-fg       "#f7768e" #red
+shgen /path/to/inputfile /path/to/outputfile
 ```
 
-`xquery` will include the hash symbol at the beginning of the colour hex. In situations where this is undesirable, such as when you need to work with the `#aaRRGGBB` format, you can use `xquerystrip` instead:
-```
-xbackground = #e5$(xquerystrip background)
-```
-output:
-```
-xbackground = #e51a1b26
-```
 
-Finally, generate the text and write it to a file as follows:
+## Examples
+1. One very handy use of `shgen` is to "hack in" support for your Xresources file
+in any configuration file, including on Wayland. Put this script somewhere in
+your `$PATH`. In this scenario the script is named `query`, and `$XRESOURCES`
+is where you keep your Xresources file.
 ```sh
-xgen /path/to/input /path/to/output
+grep "$1:" "$XRESOURCES" | awk '{print $2}'
+```
+Alternatively, if you use X11, you might like to take advantage of `xrdb`,
+though in my experience it comes with no performance benefits and is
+generally more hassle than the option above.
+```sh
+xrdb -query | grep "$1" | awk '{print $NF; exit}'
+```
+Now run `shgen` on any type of file. Here's a snippet of my `zathura` config:
+```sh
+set notification-error-fg       "$(wq color1)" #red
+set notification-warning-fg     "$(wq color3)" #yellow
+set notification-fg             "$(wq color2)" #green
+set inputbar-fg                 "$(wq color12)" #bright-blue
+set highlight-color             "$(wq color3)" #yellow
+set highlight-active-color      "$(wq color4)" #blue
+```
+and the result:
+```sh
+set notification-error-fg       "#dc322f" #red
+set notification-warning-fg     "#b58900" #yellow
+set notification-fg             "#859900" #green
+set inputbar-fg                 "#268bd2" #bright-blue
+set highlight-color             "#b58900" #yellow
+set highlight-active-color      "#268bd2" #blue
 ```
 
-#### Safety
-`xgen` works by generating a script in `/tmp/` and running it, so make certain you know exactly what commands you're calling in your configs. I take no responsibility for a ruined system due to careless use.
-If this is a concern, use the [old version](./old/) of `xgen`, which searches for specific strings (involving `xquery` and `xquerystrip` only) and runs global substitutions on them. This is far more limited functionality, but if you only plan to use `xquery` and `xquerystrip` to grab your font, dpi, and colour scheme from X Resources, the syntax is unchanged.
+2. You might have multiple devices, each with a different display scale.
+For poor souls who haven't experiences flawless fractional scaling on Wayland,
+`shgen` can be used to multiply pixel counts by your scale. Have the following
+function saved as `dpi` somewhere in your `$PATH`:
+```bash
+#!/usr/bin/env bash
+xquery () {
+    xrdb -query | grep "$1" | awk '{print $NF; exit}'
+}
+
+XDPI=$(bc <<< "scale=2; $(xquery dpi)/96")
+
+dpi () {
+    VAL=$(bc <<< "scale=2; $1 * $XDPI"); # multiply input by DPI
+    # return value rounded to nearest integer
+    printf "%.0f\n" "$(bc <<< "scale=2; $VAL + 0.01")"
+            # add 0.01 so that 2.5 rounds to 3, not 2
+}
+```
+Then:
+```dosini
+[bar/laptop]
+height = $(dpi 50)
+```
+The height will evaluate to `100` on my laptop at 2x scaling, and `63` on my
+desktop at 1.25x scale.
+
+3. Specifying your network interface in your status bar's wifi module is
+sometimes needed. With `shgen`, you can write
+```sh
+interface: $(ip -o route show to default | awk '{print $5}')
+```
+which in my case will evaluate to `interface: wlan0`.
+
+
+## Limitations
+You will have to escape shell-sensitive characters such as `$` and `^` in input
+files, which is a problem far less often than you might expect.

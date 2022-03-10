@@ -45,10 +45,11 @@ set highlight-color             "#b58900" #yellow
 set highlight-active-color      "#268bd2" #blue
 ```
 
-2. You might have multiple devices, each with a different display scale.
-For the poor souls who haven't experienced Wayland's flawless fractional
-scaling, `shgen` can be used to multiply pixel counts by your scale. Have the
-following function saved as `dpi` somewhere in your `$PATH`:
+2. For the poor X11 users who don't benefit from Wayland's flawless fractional
+scaling, managing configurations for multiple devices can be frustrating.
+In this situation, `shgen` can be used to multiply any pixel values by the
+device's scale factor. Have the following function saved as `dpi` somewhere
+in your `$PATH`:
 ```bash
 #!/usr/bin/env bash
 xquery () {

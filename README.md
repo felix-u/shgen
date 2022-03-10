@@ -28,12 +28,12 @@ xrdb -query | grep "$1" | awk '{print $NF; exit}'
 ```
 Now run `shgen` on any type of file. Here's a snippet of my `zathura` config:
 ```sh
-set notification-error-fg       "$(wq color1)" #red
-set notification-warning-fg     "$(wq color3)" #yellow
-set notification-fg             "$(wq color2)" #green
-set inputbar-fg                 "$(wq color12)" #bright-blue
-set highlight-color             "$(wq color3)" #yellow
-set highlight-active-color      "$(wq color4)" #blue
+set notification-error-fg       "$(query color1)" #red
+set notification-warning-fg     "$(query color3)" #yellow
+set notification-fg             "$(query color2)" #green
+set inputbar-fg                 "$(query color12)" #bright-blue
+set highlight-color             "$(query color3)" #yellow
+set highlight-active-color      "$(query color4)" #blue
 ```
 and the result:
 ```sh

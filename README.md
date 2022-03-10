@@ -83,4 +83,5 @@ which in my case will evaluate to `interface: wlan0`.
 
 ## Limitations
 You will have to escape shell-sensitive characters such as `$` and `^` in input
-files, which is a problem far less often than you might expect.
+files, though this is easy to fix and is a problem far less often than you
+might think.

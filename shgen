@@ -1,28 +1,17 @@
 #!/usr/bin/env sh
-[ -z "$1" ] || [ -z "$2" ] && echo "usage: shgen [INPUT FILE] [OUTPUT FILE]" && exit 1
+
+[ -z "$1" ] || [ -z "$2" ] && echo "usage: shgen [INPUT FILE] [OUTPUT FILE]" \
+    && exit 1
+
 tmpfile=$(mktemp --suffix=shgen)
 
-cat << EOF > $tmpfile
-
-xquery() {
-  while read -r name var; do case \$name in *\$1*) echo \$var; break  ;; esac
-  done  <<-EOQUERY
- $(xrdb -query)
-EOQUERY
-}
-
-xquerystrip() {
-  while IFS='#' read -r name var; do case \$name in *\$1*) echo \$var; break ;; esac
-  done  <<-EOQUERY
- $(xrdb -query)
-EOQUERY
-}
-
-cat << CONF > $2
-$(cat $1)
+cat << EOF > "$tmpfile"
+#!/usr/bin/env sh
+cat << CONF > "$2"
+$(cat "$1")
 CONF
 EOF
 
-chmod +x $tmpfile
-. $tmpfile
-rm -f $tmpfile
+chmod +x "$tmpfile"
+. "$tmpfile"
+rm -f "$tmpfile"

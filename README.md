@@ -1,6 +1,6 @@
 # shgen
 `shgen` is a POSIX shell script to evaluate shell expansions within any file.
-It is fast and lightweight with no external dependencies.
+It is fast and lightweight, requiring only coreutils.
 
 
 ## Usage

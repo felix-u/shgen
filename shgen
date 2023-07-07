@@ -3,7 +3,7 @@
 [ -z "$1" ] || [ -z "$2" ] && echo "usage: shgen [INPUT FILE] [OUTPUT FILE]" \
     && exit 1
 
-tmpfile=$(mktemp --suffix=shgen)
+tmpfile="$(mktemp)"
 
 cat << EOF > "$tmpfile"
 #!/usr/bin/env sh
